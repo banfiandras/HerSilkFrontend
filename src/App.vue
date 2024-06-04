@@ -25,11 +25,11 @@ import { RouterView } from "vue-router";
           </li>
           <li class="nav-item">
             <!-- <a class="nav-link" href="#">Link</a> -->
-            <router-link class="nav-link" to="/adatok">asd</router-link>
+            <router-link class="nav-link" to="/Details">random1</router-link>
           </li>
           <li class="nav-item">
             <!-- <a class="nav-link" href="#">Link</a> -->
-            <router-link class="nav-link" to="/adatok">ayaya</router-link>
+            <router-link class="nav-link" to="/AdminLogin">admin</router-link>
           </li>
         </ul>
       </div>
@@ -39,4 +39,7 @@ import { RouterView } from "vue-router";
   <router-view />
 </template>
 
-<style scoped></style>
+<style scoped>
+
+
+</style>
