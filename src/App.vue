@@ -20,15 +20,14 @@ import { RouterView } from "vue-router";
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
             <router-link class="nav-link active" to="/">Kategóriák</router-link>
           </li>
           <li class="nav-item">
-            <!-- <a class="nav-link" href="#">Link</a> -->
             <router-link class="nav-link" to="/Details">random1</router-link>
           </li>
+        </ul>
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <!-- <a class="nav-link" href="#">Link</a> -->
             <router-link class="nav-link" to="/AdminLogin">admin</router-link>
           </li>
         </ul>
@@ -40,6 +39,4 @@ import { RouterView } from "vue-router";
 </template>
 
 <style scoped>
-
-
 </style>

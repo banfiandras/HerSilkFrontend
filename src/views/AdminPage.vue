@@ -1,26 +1,31 @@
 <template>
   <div class="admin-page">
     <h1>Admin Page</h1>
-    <div 
-      class="drop-area" 
-      @dragover.prevent="onDragOver" 
-      @dragleave.prevent="onDragLeave" 
+    <div
+      class="drop-area"
+      @dragover.prevent="onDragOver"
+      @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
+      @click="selectFile"
     >
       <p>Drag and drop your image here, or click to select</p>
       <input type="file" accept="image/*" @change="onFileChange" ref="fileInput" />
     </div>
     <div v-if="image" class="image-preview">
       <img :src="image" alt="Uploaded Image Preview" />
+      <button @click="uploadImage">Upload Image</button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      image: null
+      image: null,
+      file: null
     };
   },
   methods: {
@@ -40,11 +45,42 @@ export default {
       this.handleFile(file);
     },
     handleFile(file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.image = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      console.log('File:', file); // Add this line to check if the file is not empty or undefined
+
+      if (file) {
+        this.file = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.image = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        console.error('No file selected or dropped.');
+      }
+    },
+    selectFile() {
+      this.$refs.fileInput.click();
+    },
+    async uploadImage() {
+      if (this.file) {
+        const formData = new FormData();
+        formData.append('image', this.file);
+
+        try {
+          const response = await axios.post('http://localhost:8000/api/upload', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          console.log('Image uploaded successfully: ', response.data);
+          this.image = null;
+          this.file = null;
+        } catch (error) {
+          console.error('Error uploading image: ', error);
+        }
+      } else {
+        console.error('No file selected or dropped.');
+      }
     }
   }
 };
@@ -89,5 +125,15 @@ export default {
   height: auto;
   border: 1px solid #ccc;
   border-radius: 10px;
+}
+
+.image-preview button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 </style>
