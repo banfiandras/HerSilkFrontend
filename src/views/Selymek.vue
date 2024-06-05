@@ -1,3 +1,3 @@
 <template>
-  <div>details</div>
+  Selymek
 </template>

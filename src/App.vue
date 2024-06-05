@@ -23,7 +23,19 @@ import { RouterView } from "vue-router";
             <router-link class="nav-link active" to="/">Kategóriák</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/Details">random1</router-link>
+            <router-link class="nav-link" to="/Ujdonsagok">Újdonságok</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/Selymek">Selymek</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/Rolam">Rólam</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/kapcsolat">Kapcsolat</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/Vasarlas">Vásárlás</router-link>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">

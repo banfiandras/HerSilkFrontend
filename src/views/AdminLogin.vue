@@ -26,7 +26,7 @@
             </div>
   
             <div class="mb-3">
-              <button @click="LoginComp(loginForm)"class="btn btn-primary w-100 py-3 mt-3">Login</button>
+              <button @click="LoginComp(loginForm)" class="btn btn-primary w-100 py-3 mt-3">Login</button>
             </div>
         </form>
   
