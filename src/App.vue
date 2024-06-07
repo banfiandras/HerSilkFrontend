@@ -35,7 +35,7 @@
           </li>
         </ul>
         <ul class="navbar-nav">
-          <li class="nav-item" v-if="!isLoggedIn">
+          <li class="nav-item" v-if="!isAuthenticated">
             <router-link class="nav-link" to="/login">Bejelentkezés</router-link>
           </li>
           <li class="nav-item" v-else>
@@ -58,7 +58,7 @@ export default {
   setup() {
     const authStore = useAuthStore();
 
-    const isLoggedIn = computed(() => authStore.isLoggedIn);
+    const isLoggedIn = computed(() => authStore.isAuthenticated);
 
     const logout = () => {
       authStore.logout();
