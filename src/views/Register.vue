@@ -12,28 +12,39 @@
   
   <script>
   import axios from 'axios';
+  import { useAuthStore } from '@/store';
   
   export default {
-    data() {
-      return {
-        username: '',
-        password: '',
-      };
-    },
-    methods: {
-      async register() {
-        try {
-          const response = await axios.post('http://localhost:8000/api/register', {
-            username: this.username,
-            password: this.password,
-          });
-          alert(response.data.message);
-        } catch (error) {
-          alert(error.response.data.message);
-        }
-      },
-    },
-  };
+  setup() {
+    const authStore = useAuthStore();
+
+    const register = async () => {
+      try {
+        const response = await axios.post('http://localhost:8000/api/register', {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
+
+        authStore.login();
+        router.push('/');
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    };
+
+    return {
+      register,
+    };
+  },
+  data() {
+    return {
+      username: '',
+      email: '',
+      password: '',
+    };
+  },
+};
   </script>
   
   <style scoped>

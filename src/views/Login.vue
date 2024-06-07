@@ -12,27 +12,34 @@
 
 <script>
 import axios from 'axios';
-
+import { useAuthStore } from '@/store';
 
 export default {
-  data() {
-    return {
-      username: '',
-      password: '',
-    };
-  },
-  methods: {
-    async login() {
+  setup() {
+    const authStore = useAuthStore();
+
+    const login = async () => {
       try {
         const response = await axios.post('http://localhost:8000/api/login', {
           username: this.username,
           password: this.password,
         });
-        alert(response.data.message);
+        authStore.login();
+        router.push('/');
       } catch (error) {
         alert(error.response.data.message);
       }
-    },
+    };
+
+    return {
+      login,
+    };
+  },
+  data() {
+    return {
+      username: '',
+      password: '',
+    };
   },
 };
 </script>

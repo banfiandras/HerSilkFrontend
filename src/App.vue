@@ -1,7 +1,3 @@
-<script setup>
-import { RouterView } from "vue-router";
-</script>
-
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -38,9 +34,12 @@ import { RouterView } from "vue-router";
             <router-link class="nav-link" to="/Vasarlas">Vásárlás</router-link>
           </li>
         </ul>
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <router-link class="nav-link" to="/Login">Bejelentkezés</router-link>
+        <ul class="navbar-nav">
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link class="nav-link" to="/login">Bejelentkezés</router-link>
+          </li>
+          <li class="nav-item" v-else>
+            <a class="nav-link" href="#" @click.prevent="logout">Kijelentkezés</a>
           </li>
         </ul>
       </div>
@@ -49,6 +48,30 @@ import { RouterView } from "vue-router";
 
   <router-view />
 </template>
+
+<script>
+import { RouterView } from "vue-router";
+import { useAuthStore } from '@/store';
+import { computed } from 'vue';
+
+export default {
+  setup() {
+    const authStore = useAuthStore();
+
+    const isLoggedIn = computed(() => authStore.isLoggedIn);
+
+    const logout = () => {
+      authStore.logout();
+      router.push('/Login');
+    };
+
+    return {
+      isLoggedIn,
+      logout,
+    };
+  },
+};
+</script>
 
 <style scoped>
 </style>
