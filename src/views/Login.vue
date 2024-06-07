@@ -12,34 +12,44 @@
 
 <script>
 import axios from 'axios';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store';
 
 export default {
-  setup() {
-    const authStore = useAuthStore();
-
-    const login = async () => {
-      try {
-        const response = await axios.post('http://localhost:8000/api/login', {
-          username: this.username,
-          password: this.password,
-        });
-        authStore.login();
-        router.push('/');
-      } catch (error) {
-        alert(error.response.data.message);
-      }
-    };
-
-    return {
-      login,
-    };
-  },
   data() {
     return {
       username: '',
       password: '',
     };
+  },
+
+  setup() {
+    const router = useRouter();
+    const authStore = useAuthStore();
+
+    return {
+      router,
+      authStore,
+    };
+  },
+
+  methods: {
+    async login() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/login', {
+          username: this.username,
+          password: this.password,
+        });
+
+        console.log(response.data);
+
+        this.authStore.login();
+
+        this.router.push('/');
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    },
   },
 };
 </script>

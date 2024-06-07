@@ -11,38 +11,45 @@
   </template>
   
   <script>
-  import axios from 'axios';
-  import { useAuthStore } from '@/store';
-  
-  export default {
-  setup() {
-    const authStore = useAuthStore();
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/store';
 
-    const register = async () => {
-      try {
-        const response = await axios.post('http://localhost:8000/api/register', {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        });
-
-        authStore.login();
-        router.push('/');
-      } catch (error) {
-        alert(error.response.data.message);
-      }
-    };
-
-    return {
-      register,
-    };
-  },
+export default {
   data() {
     return {
       username: '',
-      email: '',
       password: '',
     };
+  },
+
+  setup() {
+    const router = useRouter();
+    const authStore = useAuthStore();
+
+    return {
+      router,
+      authStore,
+    };
+  },
+
+  methods: {
+    async register() {
+      try {
+        const response = await axios.post('http://localhost:8000/api/register', {
+          username: this.username,
+          password: this.password,
+        });
+
+        console.log(response.data); 
+
+        this.authStore.login();
+
+        this.router.push('/');
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    },
   },
 };
   </script>
