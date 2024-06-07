@@ -12,6 +12,7 @@
   
   <script>
   import axios from 'axios';
+  import { useAuthStore } from '@/store/auth';
   
   export default {
     data() {
@@ -27,6 +28,7 @@
             username: this.username,
             password: this.password,
           });
+          useAuthStore().login();
           alert(response.data.message);
         } catch (error) {
           alert(error.response.data.message);
