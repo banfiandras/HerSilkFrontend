@@ -40,7 +40,7 @@ import { RouterView } from "vue-router";
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link" to="/AdminLogin">admin</router-link>
+            <router-link class="nav-link" to="/Login">Bejelentkezés</router-link>
           </li>
         </ul>
       </div>
