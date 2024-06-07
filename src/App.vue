@@ -35,43 +35,59 @@
           </li>
         </ul>
         <ul class="navbar-nav">
-          <li class="nav-item" v-if="!isAuthenticated">
-            <router-link class="nav-link" to="/login">Bejelentkezés</router-link>
-          </li>
-          <li class="nav-item" v-else>
-            <a class="nav-link" href="#" @click.prevent="logout">Kijelentkezés</a>
+          <li class="nav-item">
+            <a class="nav-link" @click="handleLoginLogout">{{ loginLogoutText }}</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <router-view />
+  <router-view @login="handleLogin" @logout="handleLogout" />
 </template>
 
 <script>
-import { RouterView } from "vue-router";
-import { useAuthStore } from '@/store';
-import { computed } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   setup() {
-    const authStore = useAuthStore();
+    const router = useRouter();
+    const loginLogoutText = ref('Bejelentkezés');
 
-    const isLoggedIn = computed(() => authStore.isAuthenticated);
+    onMounted(() => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        loginLogoutText.value = 'Kijelentkezés';
+      }
+    });
 
-    const logout = () => {
-      authStore.logout();
-      router.push('/Login');
+    const handleLogin = () => {
+      loginLogoutText.value = 'Kijelentkezés';
+    };
+
+    const handleLogout = () => {
+      loginLogoutText.value = 'Bejelentkezés';
+      localStorage.removeItem('token');
+      router.push('/login');
+    };
+
+    const handleLoginLogout = () => {
+      if (loginLogoutText.value === 'Bejelentkezés') {
+        router.push('/login');
+      } else {
+        handleLogout();
+      }
     };
 
     return {
-      isLoggedIn,
-      logout,
+      loginLogoutText,
+      handleLogin,
+      handleLogout,
+      handleLoginLogout,
     };
   },
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

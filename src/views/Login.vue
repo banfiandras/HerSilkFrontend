@@ -13,23 +13,12 @@
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/store';
 
 export default {
   data() {
     return {
       username: '',
       password: '',
-    };
-  },
-
-  setup() {
-    const router = useRouter();
-    const authStore = useAuthStore();
-
-    return {
-      router,
-      authStore,
     };
   },
 
@@ -43,9 +32,13 @@ export default {
 
         console.log(response.data);
 
-        this.authStore.login();
+        const token = response.data.token;
 
-        this.router.push('/');
+        localStorage.setItem('token', token);
+
+        this.$emit('login');
+
+        this.$router.push('/');
       } catch (error) {
         alert(error.response.data.message);
       }
