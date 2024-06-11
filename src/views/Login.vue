@@ -32,13 +32,13 @@ export default {
 
         console.log(response.data);
 
-        const token = response.data.token;
-
-        localStorage.setItem('token', token);
-
-        this.$emit('login');
-
-        this.$router.push('/');
+        if (this.username === 'admin' && response.status === 200) {
+          localStorage.setItem('token', response.data.token);
+          this.$router.push('/admin');
+        } else {
+          localStorage.setItem('token', response.data.token);
+          this.$router.push('/');
+        }
       } catch (error) {
         alert(error.response.data.message);
       }

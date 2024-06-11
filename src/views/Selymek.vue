@@ -34,7 +34,8 @@ export default {
       try {
         const response = await axios.get('http://localhost:8000/api/images/sal');
         if (response.data.length > 0) {
-          this.salImage = response.data[0];
+          this.salImage = response.data;
+          console.log(response.data);
         }
       } catch (error) {
         console.error('Error fetching Sal image: ', error);
@@ -44,7 +45,7 @@ export default {
       try {
         const response = await axios.get('http://localhost:8000/api/images/kendo');
         if (response.data.length > 0) {
-          this.kendoImage = response.data[0];
+          this.kendoImage = response.data;
         }
       } catch (error) {
         console.error('Error fetching Kendo image: ', error);
