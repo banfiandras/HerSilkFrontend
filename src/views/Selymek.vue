@@ -40,6 +40,7 @@ export default {
         const response = await axios.get('http://localhost:8000/api/images/sal');
         if (response.data.length > 0) {
           this.salImage = response.data;
+          console.log(this.salImage);
         }
       } catch (error) {
         console.error('Error fetching Sal image: ', error);
