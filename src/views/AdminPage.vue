@@ -15,8 +15,9 @@
     <div v-if="image" class="image-preview">
       <img :src="image" alt="Uploaded Image Preview" />
       <input type="text" v-model="imageName" placeholder="Enter image name" />
-      <button @click="uploadSal">Sál</button>
-      <button @click="uploadKendo">Kendő</button>
+      <button @click="uploadTo('sal')">Sál</button>
+      <button @click="uploadTo('kendo')">Kendő</button>
+      <button @click="uploadTo('carousel')">Carousel</button>
     </div>
 
     <div class="uploaded-images">
@@ -64,7 +65,6 @@ export default {
       this.handleFile(file);
     },
     handleFile(file) {
-      console.log('File:', file);
       if (file) {
         this.file = file;
         const reader = new FileReader();
@@ -76,16 +76,13 @@ export default {
         console.error('No file selected or dropped.');
       }
     },
-    selectFile() {
-      this.$refs.fileInput.click();
-    },
-    async uploadSal() {
+    async uploadTo(directory) {
       if (this.file && this.imageName) {
         const formData = new FormData();
         formData.append('image', this.file);
-        formData.append('name', this.imageName); 
+        formData.append('name', this.imageName);
         try {
-          const response = await axios.post('http://localhost:8000/api/uploadSal', formData, {
+          const response = await axios.post(`http://localhost:8000/api/upload${directory}`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -93,8 +90,8 @@ export default {
           console.log('Image uploaded successfully: ', response.data);
           this.image = null;
           this.file = null;
-          this.imageName = ''; 
-          this.fetchImages(); // Refresh images after upload
+          this.imageName = '';
+          this.fetchImages();
         } catch (error) {
           console.error('Error uploading image: ', error);
         }
@@ -102,30 +99,6 @@ export default {
         console.error('No file selected or no image name provided.');
       }
     },
-    async uploadKendo() {
-      if (this.file && this.imageName) {
-        const formData = new FormData();
-        formData.append('image', this.file);
-        formData.append('name', this.imageName); 
-        try {
-          const response = await axios.post('http://localhost:8000/api/uploadKendo', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          });
-          console.log('Image uploaded successfully: ', response.data);
-          this.image = null;
-          this.file = null;
-          this.imageName = ''; 
-          this.fetchImages(); // Refresh images after upload
-        } catch (error) {
-          console.error('Error uploading image: ', error);
-        }
-      } else {
-        console.error('No file selected or no image name provided.');
-      }
-    },
-   
     fetchImages() {
       axios
         .get('http://localhost:8000/api/allImages')

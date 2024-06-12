@@ -13,6 +13,7 @@
 <script>
 import axios from 'axios';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../store';
 
 export default {
   data() {
@@ -32,11 +33,12 @@ export default {
 
         console.log(response.data);
 
+        const authStore = useAuthStore();
+        authStore.login(this.username);
+
         if (this.username === 'admin' && response.status === 200) {
-          localStorage.setItem('token', response.data.token);
           this.$router.push('/admin');
         } else {
-          localStorage.setItem('token', response.data.token);
           this.$router.push('/');
         }
       } catch (error) {
