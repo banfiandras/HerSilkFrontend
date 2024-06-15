@@ -22,12 +22,26 @@
 
     <div class="uploaded-images">
       <h2>Uploaded Images</h2>
-      <ul>
-        <li v-for="image in images" :key="image.id">
-          <img :src="baseUrl + image" alt="Uploaded Image" />
-          <button @click="deleteImage(image)">Delete</button>
-        </li>
-      </ul>
+      <div class="image-container">
+        <div
+          v-for="image in images"
+          :key="image.id"
+          class="image-item"
+          @click="enlargeImage(image)"
+        >
+          <img :src="baseUrl + image.location" :alt="image.filename" />
+          <div class="image-overlay">
+            <p>{{ image.filename }}</p>
+            <button @click.stop="deleteImage(image)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" v-if="selectedImage">
+      <span class="close" @click="selectedImage = null">&times;</span>
+      <img :src="baseUrl + selectedImage.location" :alt="selectedImage.filename" />
+      <p>{{ selectedImage.filename }}</p>
     </div>
   </div>
 </template>
@@ -42,6 +56,7 @@ export default {
       file: null,
       imageName: '',
       images: [],
+      selectedImage: null,
       baseUrl: 'http://127.0.0.1:8000'
     };
   },
@@ -109,17 +124,23 @@ export default {
           console.error('Error fetching images:', error);
         });
     },
-    deleteImage(imageUrl) {
-      const imageName = imageUrl.split('/').pop();
+    deleteImage(image) {
+      const imageName = image.location.split('/').pop();
       axios
         .delete(`http://localhost:8000/api/images/${imageName}`)
         .then(() => {
-          this.images = this.images.filter((image) => image !== imageUrl);
+          this.images = this.images.filter((img) => img.location !== image.location);
           console.log('Image deleted successfully');
         })
         .catch((error) => {
           console.error('Error deleting image:', error);
         });
+    },
+    enlargeImage(image) {
+      this.selectedImage = image;
+    },
+    closeImage() {
+      this.selectedImage = null;
     }
   }
 };
@@ -174,31 +195,108 @@ h1 {
   color: #6a0dad;
 }
 
-.uploaded-images ul {
-  list-style: none;
-  padding: 0;
+.image-container {
+  column-count: 4;
+  column-gap: 15px;
 }
 
-.uploaded-images ul li {
-  margin-bottom: 10px;
-}
-
-.uploaded-images ul li img {
-  max-width: 100%;
+.image-item {
+  display: inline-block;
+  margin-bottom: 15px;
+  position: relative;
+  cursor: pointer;
   border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.uploaded-images ul li button {
-  margin-top: 5px;
+.image-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.image-overlay button {
   background-color: #8a2be2;
   color: white;
   border: none;
   border-radius: 5px;
-  padding: 8px 16px;
+  padding: 5px 10px;
   cursor: pointer;
 }
 
-.uploaded-images ul li button:hover {
+.image-overlay button:hover {
   background-color: #6a0dad;
+}
+
+.image-item:hover img {
+  transform: scale(1.1);
+}
+
+.image-item:hover .image-overlay {
+  opacity: 1;
+}
+
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding-top: 50px;
+  text-align: center;
+}
+
+.modal img {
+  max-width: 80%;
+  max-height: 80%;
+  margin: 0 auto;
+  border-radius: 10px;
+}
+
+.modal .close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  .image-container {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    column-count: 1;
+  }
 }
 </style>

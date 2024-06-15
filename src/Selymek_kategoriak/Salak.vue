@@ -1,10 +1,17 @@
 <template>
   <div class="salak-page">
     <h1>Salak Page</h1>
-    <div class="image-grid">
-      <div v-for="image in images" :key="image.id" class="image-card" @click="enlargeImage(image)">
+    <div class="image-container">
+      <div
+        v-for="image in images"
+        :key="image.id"
+        class="image-item"
+        @click="enlargeImage(image)"
+      >
         <img :src="baseUrl + image.location" :alt="image.filename" />
-        <p>{{ image.filename }}</p>
+        <div class="image-overlay">
+          <p>{{ image.filename }}</p>
+        </div>
       </div>
     </div>
     <div class="modal" v-if="selectedImage">
@@ -28,11 +35,9 @@ export default {
   },
   mounted() {
     this.fetchSalImages();
-    // Add event listener to close modal on pressing Escape key
     document.addEventListener('keydown', this.onEscKey);
   },
   beforeDestroy() {
-    // Remove event listener when component is destroyed
     document.removeEventListener('keydown', this.onEscKey);
   },
   methods: {
@@ -61,51 +66,50 @@ export default {
 
 <style scoped>
 .salak-page {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
 }
 
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-auto-rows: 200px; /* Set a minimum row height */
-  grid-gap: 20px;
-  grid-auto-flow: dense; /* Fill empty spaces with images */
+.image-container {
+  column-count: 4;
+  column-gap: 15px;
 }
 
-.image-card {
+.image-item {
+  display: inline-block;
+  margin-bottom: 15px;
   position: relative;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.image-card img {
+.image-item img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
+  height: auto;
+  display: block;
   transition: transform 0.3s ease;
 }
 
-.image-card p {
+.image-overlay {
   position: absolute;
-  bottom: 10px;
+  bottom: 0;
   left: 0;
   width: 100%;
-  text-align: center;
-  margin: 0;
-  padding: 5px;
   background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
-  font-size: 14px;
+  padding: 10px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.image-card:hover p {
+.image-item:hover img {
+  transform: scale(1.1);
+}
+
+.image-item:hover .image-overlay {
   opacity: 1;
 }
 
@@ -136,5 +140,23 @@ export default {
   color: #fff;
   font-size: 30px;
   cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  .image-container {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    column-count: 1;
+  }
 }
 </style>

@@ -1,10 +1,17 @@
 <template>
   <div class="salak-page">
-    <h1>kendok Page</h1>
-    <div class="image-grid">
-      <div v-for="image in images" :key="image.id" class="image-card" @click="enlargeImage(image)">
+    <h1>Kendok Page</h1>
+    <div class="image-container">
+      <div
+        v-for="image in images"
+        :key="image.id"
+        class="image-item"
+        @click="enlargeImage(image)"
+      >
         <img :src="baseUrl + image.location" :alt="image.filename" />
-        <p>{{ image.filename }}</p>
+        <div class="image-overlay">
+          <p>{{ image.filename }}</p>
+        </div>
       </div>
     </div>
     <div class="modal" v-if="selectedImage">
@@ -28,12 +35,16 @@ export default {
   },
   mounted() {
     this.fetchSalImages();
+    document.addEventListener('keydown', this.onEscKey);
+  },
+  beforeDestroy() {
+    document.removeEventListener('keydown', this.onEscKey);
   },
   methods: {
     async fetchSalImages() {
       try {
         const response = await axios.get('http://localhost:8000/api/images/kendok');
-        this.images = response.data; 
+        this.images = response.data;
       } catch (error) {
         console.error('Error fetching Sal images:', error);
       }
@@ -41,41 +52,65 @@ export default {
     enlargeImage(image) {
       this.selectedImage = image;
     },
+    closeImage() {
+      this.selectedImage = null;
+    },
+    onEscKey(event) {
+      if (event.key === 'Escape') {
+        this.closeImage();
+      }
+    },
   },
 };
 </script>
 
 <style scoped>
 .salak-page {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
 }
 
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
+.image-container {
+  column-count: 4;
+  column-gap: 15px;
 }
 
-.image-card {
+.image-item {
+  display: inline-block;
+  margin-bottom: 15px;
+  position: relative;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.image-card img {
+.image-item img {
   width: 100%;
   height: auto;
+  display: block;
   transition: transform 0.3s ease;
 }
 
-.image-card p {
-  text-align: center;
-  margin: 10px 0;
-  font-size: 14px;
-  color: #333;
+.image-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 10px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-item:hover img {
+  transform: scale(1.1);
+}
+
+.image-item:hover .image-overlay {
+  opacity: 1;
 }
 
 .modal {
@@ -105,5 +140,23 @@ export default {
   color: #fff;
   font-size: 30px;
   cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  .image-container {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .image-container {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-container {
+    column-count: 1;
+  }
 }
 </style>
