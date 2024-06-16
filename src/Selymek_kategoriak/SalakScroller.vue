@@ -37,6 +37,7 @@
     mounted() {
       this.fetchSalImages();
       this.getSelectedImage();
+      this.scrollToTop();
     },
     methods: {
       async fetchSalImages() {
