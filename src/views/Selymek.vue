@@ -1,14 +1,17 @@
 <template>
   <div class="select-image-page">
-    <h1>Select Image</h1>
     <div class="image-container">
       <div class="image-card" @click="selectSalImage">
         <img :src="baseUrl + salImage" alt="Sal Image" />
-        <p>Select Sal Image</p>
+        <div class="overlay">
+          <p>Sálak</p>
+        </div>
       </div>
       <div class="image-card" @click="selectKendoImage">
         <img :src="baseUrl + kendoImage" alt="Kendo Image" />
-        <p>Select Kendo Image</p>
+        <div class="overlay">
+          <p>Kendők</p>
+        </div>
       </div>
     </div>
   </div>
@@ -40,7 +43,6 @@ export default {
         const response = await axios.get('http://localhost:8000/api/images/sal');
         if (response.data.length > 0) {
           this.salImage = response.data;
-          console.log(this.salImage);
         }
       } catch (error) {
         console.error('Error fetching Sal image: ', error);
@@ -67,32 +69,50 @@ export default {
 </script>
 
 <style scoped>
+
 .select-image-page {
   max-width: 800px;
   margin: 0 auto;
   padding: 40px;
-  background-color: #f8f8f8;
+  background-color: #f1d5fc;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  background-image: radial-gradient(circle, rgba(190, 176, 231, 0.5), rgba(157, 144, 199, 0.5)), linear-gradient(to right, rgba(230, 230, 250, 0.7) 10%, transparent 10%), linear-gradient(to bottom, rgba(230, 230, 250, 0.7) 10%, transparent 10%);
+  background-size: 200% 100%, 100% 100%, 100% 100%;
+  animation: backgroundAnimation 10s infinite linear;
+
+  @keyframes backgroundAnimation {
+    0% {
+      background-position: 0 0, 0 0, 0 0;
+    }
+    100% {
+      background-position: -200% 0, 0 0, 0 0;
+    }
+  }
 }
 
 h1 {
   color: #6a0dad;
+  margin-bottom: 30px;
 }
 
 .image-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 50px; /* Adjust the gap between image cards */
+  gap: 30px;
 }
 
 .image-card {
+  position: relative;
   cursor: pointer;
-  background-color: #ffffff;
-  padding: 20px;
+  width: 400px;
+  height: 400px;
   border-radius: 10px;
+  overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
 }
@@ -103,14 +123,33 @@ h1 {
 }
 
 .image-card img {
-  width: 300px;
-  height: auto;
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
   border-radius: 10px;
 }
 
-.image-card p {
-  margin-top: 10px;
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(138, 43, 226, 0.7);
+  color: white;
+  padding: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.image-card:hover .overlay {
+  opacity: 1;
+}
+
+.overlay p {
+  margin: 0;
   font-size: 18px;
-  color: #8a2be2;
 }
 </style>

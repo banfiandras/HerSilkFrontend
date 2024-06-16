@@ -1,6 +1,6 @@
 <template>
   <div class="salak-page">
-    <h1>Salak Page</h1>
+    <h1 style="color: #6a0dad;">Salak Page</h1>
     <div class="image-container">
       <div
         v-for="image in images"
@@ -9,15 +9,15 @@
         @click="enlargeImage(image)"
       >
         <img :src="baseUrl + image.location" :alt="image.filename" />
-        <div class="image-overlay">
-          <p>{{ image.filename }}</p>
+        <div class="image-overlay" style="background-color: rgba(138, 43, 226, 0.7);">
+          <p style="color: white;">{{ image.filename }}</p>
         </div>
       </div>
     </div>
     <div class="modal" v-if="selectedImage">
-      <span class="close" @click="selectedImage = null">&times;</span>
+      <span class="close" @click="selectedImage = null" style="color: white;">&times;</span>
       <img :src="baseUrl + selectedImage.location" :alt="selectedImage.filename" />
-      <p>{{ selectedImage.filename }}</p>
+      <p style="color: white;">{{ selectedImage.filename }}</p>
     </div>
   </div>
 </template>
@@ -66,7 +66,7 @@ export default {
 
 <style scoped>
 .salak-page {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }

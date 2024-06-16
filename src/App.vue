@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light custom-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand custom-brand" href="#">Navbar</a>
+      <a class="navbar-brand custom-brand" href="#">Hersilk</a>
       <button
         class="navbar-toggler custom-toggler"
         type="button"
