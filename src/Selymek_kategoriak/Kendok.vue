@@ -1,16 +1,16 @@
 <template>
   <div class="kendok-page">
-    <h1 style="color: #6a0dad;">Kendok Page</h1>
+    <h1 style="color: #6a0dad;">Salak Page</h1>
     <div class="image-container">
       <div
         v-for="image in images"
         :key="image.id"
         class="image-item"
-        @click="enlargeImage(image)"
+        @click="navigateToScroller(image)"
       >
-        <img :src="baseUrl + image.location" :alt="image.filename" />
+      <img :src="baseUrl + image.location" :alt="image.filename" />
         <div class="image-overlay" style="background-color: rgba(138, 43, 226, 0.7);">
-          <p style="color: white;">{{ getFilenameWithoutExtension(image.filename) }}</p>
+          <p>{{ getFilenameWithoutExtension(image.filename) }}</p>
         </div>
       </div>
     </div>
@@ -29,16 +29,11 @@ export default {
   data() {
     return {
       images: [],
-      selectedImage: null,
       baseUrl: 'http://localhost:8000',
     };
   },
   mounted() {
     this.fetchSalImages();
-    document.addEventListener('keydown', this.onEscKey);
-  },
-  beforeDestroy() {
-    document.removeEventListener('keydown', this.onEscKey);
   },
   methods: {
     async fetchSalImages() {
@@ -49,16 +44,10 @@ export default {
         console.error('Error fetching Sal images:', error);
       }
     },
-    enlargeImage(image) {
-      this.selectedImage = image;
-    },
-    closeImage() {
-      this.selectedImage = null;
-    },
-    onEscKey(event) {
-      if (event.key === 'Escape') {
-        this.closeImage();
-      }
+    navigateToScroller(image) {
+      localStorage.setItem('selectedImage', JSON.stringify(image));
+
+      this.$router.push({ name: 'KendokScroller' });
     },
     getFilenameWithoutExtension(filename) {
       const parts = filename.split('.');

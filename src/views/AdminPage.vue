@@ -148,7 +148,7 @@ export default {
 
 <style scoped>
 .admin-container {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   background-color: #f8f8f8;

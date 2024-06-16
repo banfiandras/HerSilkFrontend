@@ -10,6 +10,8 @@ import Vasarlas from "../views/Vasarlas.vue";
 import Kendok from "../Selymek_kategoriak/Kendok.vue";
 import Salak from "../Selymek_kategoriak/Salak.vue";
 import Register from "../views/Register.vue";
+import SalScroller from "../Selymek_kategoriak/SalakScroller.vue";
+import KendoScroller from "../Selymek_kategoriak/KendokScroller.vue";
 
 const routes = [
 
@@ -24,6 +26,8 @@ const routes = [
   {path: '/kendok', name: 'Kendok', component: Kendok},
   {path: '/salak', name: 'Salak', component: Salak},
   {path: '/register', name: 'Register', component: Register},
+  {path: '/sal-scroller', name: 'SalakScroller', component: SalScroller},
+  {path: '/kendo-scroller', name: 'KendokScroller', component: KendoScroller},
 ];
 
 const baseURL = import.meta.env.VUE_APP_BASE_URL || '/';
