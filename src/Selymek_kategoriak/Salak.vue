@@ -10,14 +10,14 @@
       >
         <img :src="baseUrl + image.location" :alt="image.filename" />
         <div class="image-overlay" style="background-color: rgba(138, 43, 226, 0.7);">
-          <p style="color: white;">{{ image.filename }}</p>
+          <p style="color: white;">{{ getFilenameWithoutExtension(image.filename) }}</p>
         </div>
       </div>
     </div>
     <div class="modal" v-if="selectedImage">
       <span class="close" @click="selectedImage = null" style="color: white;">&times;</span>
       <img :src="baseUrl + selectedImage.location" :alt="selectedImage.filename" />
-      <p style="color: white;">{{ selectedImage.filename }}</p>
+      <p style="color: white;">{{ getFilenameWithoutExtension(selectedImage.filename) }}</p>
     </div>
   </div>
 </template>
@@ -59,6 +59,10 @@ export default {
       if (event.key === 'Escape') {
         this.closeImage();
       }
+    },
+    getFilenameWithoutExtension(filename) {
+      const parts = filename.split('.');
+      return parts.slice(0, -1).join('.');
     },
   },
 };
