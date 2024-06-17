@@ -2,33 +2,27 @@
   <div class="admin-container">
     <h1>Admin Page</h1>
 
-    <div
-      class="drop-area"
-      @dragover.prevent="onDragOver"
-      @dragleave.prevent="onDragLeave"
-      @drop.prevent="onDrop"
-    >
-      <p>Drag and drop your image here, or click to select</p>
-      <input type="file" accept="image/*" @change="onFileChange" ref="fileInput" />
+    <div class="drop-area" @dragover.prevent="onDragOver" @dragleave.prevent="onDragLeave" @drop.prevent="onDrop" ref="dropArea">
+      <p>Drag and drop your images here, or click to select</p>
+      <input type="file" accept="image/*" multiple @change="onFileChange" ref="fileInput" />
     </div>
 
-    <div v-if="image" class="image-preview">
-      <img :src="image" alt="Uploaded Image Preview" />
+    <div v-if="imagesToUpload.length" class="image-preview">
+      <div v-for="(image, index) in imagesToUpload" :key="index" class="image-preview-item">
+        <img :src="image.preview" alt="Uploaded Image Preview" />
+        <button @click="removeImage(index)">Remove</button>
+      </div>
       <input type="text" v-model="imageName" placeholder="Enter image name" />
-      <button @click="uploadTo('sal')">Sál</button>
-      <button @click="uploadTo('kendo')">Kendő</button>
-      <button @click="uploadTo('carousel')">Carousel</button>
+      <button @click="uploadTo('sal')" :disabled="imagesToUpload.length > 4">Sál</button>
+      <button @click="uploadTo('kendo')" :disabled="imagesToUpload.length > 4">Kendő</button>
+      <button @click="uploadTo('carousel')" :disabled="imagesToUpload.length > 4">Carousel</button>
+      <p v-if="imagesToUpload.length > 4" class="error-message">You can only upload up to 4 images.</p>
     </div>
 
     <div class="uploaded-images">
       <h2>Uploaded Images</h2>
-      <div class="image-container">
-        <div
-          v-for="image in images"
-          :key="image.id"
-          class="image-item"
-          @click="enlargeImage(image)"
-        >
+      <div class="image-grid">
+        <div v-for="image in images" :key="image.id" class="image-item" @click="enlargeImage(image)">
           <img :src="baseUrl + image.location" :alt="image.filename" />
           <div class="image-overlay">
             <p>{{ image.filename }}</p>
@@ -52,8 +46,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      image: null,
-      file: null,
+      imagesToUpload: [],
       imageName: '',
       images: [],
       selectedImage: null,
@@ -72,29 +65,38 @@ export default {
     },
     onDrop(event) {
       this.$refs.dropArea.classList.remove('hover');
-      const file = event.dataTransfer.files[0];
-      this.handleFile(file);
+      const files = event.dataTransfer.files;
+      this.handleFiles(files);
     },
     onFileChange(event) {
-      const file = event.target.files[0];
-      this.handleFile(file);
+      const files = event.target.files;
+      this.handleFiles(files);
     },
-    handleFile(file) {
-      if (file) {
-        this.file = file;
+    handleFiles(files) {
+      for (let file of files) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          this.image = e.target.result;
+          if (this.imagesToUpload.length < 4) {
+            this.imagesToUpload.push({
+              file: file,
+              preview: e.target.result
+            });
+          } else {
+            console.error('You can only upload up to 4 images.');
+          }
         };
         reader.readAsDataURL(file);
-      } else {
-        console.error('No file selected or dropped.');
       }
     },
+    removeImage(index) {
+      this.imagesToUpload.splice(index, 1);
+    },
     async uploadTo(directory) {
-      if (this.file && this.imageName) {
+      if (this.imagesToUpload.length && this.imageName) {
         const formData = new FormData();
-        formData.append('image', this.file);
+        for (let image of this.imagesToUpload) {
+          formData.append('images[]', image.file);
+        }
         formData.append('name', this.imageName);
         try {
           const response = await axios.post(`http://localhost:8000/api/upload${directory}`, formData, {
@@ -102,16 +104,15 @@ export default {
               'Content-Type': 'multipart/form-data'
             }
           });
-          console.log('Image uploaded successfully: ', response.data);
-          this.image = null;
-          this.file = null;
+          console.log('Images uploaded successfully: ', response.data);
+          this.imagesToUpload = [];
           this.imageName = '';
           this.fetchImages();
         } catch (error) {
-          console.error('Error uploading image: ', error);
+          console.error('Error uploading images: ', error);
         }
       } else {
-        console.error('No file selected or no image name provided.');
+        console.error('No images selected or no image name provided.');
       }
     },
     fetchImages() {
@@ -181,10 +182,32 @@ h1 {
   text-align: center;
 }
 
+.image-preview-item {
+  display: inline-block;
+  margin: 10px;
+  position: relative;
+}
+
 .image-preview img {
-  max-width: 100%;
-  max-height: 300px;
+  max-width: 100px;
+  max-height: 100px;
   border-radius: 10px;
+}
+
+.image-preview-item button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #ff4c4c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.image-preview-item button:hover {
+  background: #ff0000;
 }
 
 .uploaded-images {
@@ -195,14 +218,13 @@ h1 {
   color: #6a0dad;
 }
 
-.image-container {
-  column-count: 4;
-  column-gap: 15px;
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
 }
 
 .image-item {
-  display: inline-block;
-  margin-bottom: 15px;
   position: relative;
   cursor: pointer;
   border-radius: 10px;
@@ -212,7 +234,8 @@ h1 {
 
 .image-item img {
   width: 100%;
-  height: auto;
+  height: 250px;
+  object-fit: cover;
   display: block;
   transition: transform 0.3s ease;
 }
@@ -282,21 +305,20 @@ h1 {
   cursor: pointer;
 }
 
-@media (max-width: 1200px) {
-  .image-container {
-    column-count: 3;
-  }
+.error-message {
+  color: red;
+  margin-top: 10px;
 }
 
 @media (max-width: 768px) {
-  .image-container {
-    column-count: 2;
+  .image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
 
 @media (max-width: 480px) {
-  .image-container {
-    column-count: 1;
+  .image-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   }
 }
 </style>

@@ -1,23 +1,23 @@
 <template>
-  <div class="kendok-page">
-    <h1 style="color: #6a0dad;">Salak Page</h1>
+  <div class="kendo-page">
+    <h1 style="color: #6a0dad;">Kendo Page</h1>
     <div class="image-container">
       <div
         v-for="image in images"
         :key="image.id"
         class="image-item"
-        @click="navigateToScroller(image)"
+        @click="openModal(image)"
       >
-      <img :src="baseUrl + image.location" :alt="image.filename" />
-        <div class="image-overlay" style="background-color: rgba(138, 43, 226, 0.7);">
+        <img :src="baseUrl + image.location" :alt="image.filename" />
+        <div class="image-overlay">
           <p>{{ getFilenameWithoutExtension(image.filename) }}</p>
         </div>
       </div>
     </div>
     <div class="modal" v-if="selectedImage">
-      <span class="close" @click="selectedImage = null" style="color: white;">&times;</span>
+      <span class="close" @click="selectedImage = null">&times;</span>
       <img :src="baseUrl + selectedImage.location" :alt="selectedImage.filename" />
-      <p style="color: white;">{{ getFilenameWithoutExtension(selectedImage.filename) }}</p>
+      <p>{{ getFilenameWithoutExtension(selectedImage.filename) }}</p>
     </div>
   </div>
 </template>
@@ -30,35 +30,33 @@ export default {
     return {
       images: [],
       baseUrl: 'http://localhost:8000',
+      selectedImage: null,
     };
   },
   mounted() {
-    this.fetchSalImages();
+    this.fetchImages();
   },
   methods: {
-    async fetchSalImages() {
+    async fetchImages() {
       try {
-        const response = await axios.get('http://localhost:8000/api/images/kendok');
+        const response = await axios.get('http://localhost:8000/api/images/kendo');
         this.images = response.data;
       } catch (error) {
-        console.error('Error fetching Sal images:', error);
+        console.error('Error fetching images:', error);
       }
     },
-    navigateToScroller(image) {
-      localStorage.setItem('selectedImage', JSON.stringify(image));
-
-      this.$router.push({ name: 'KendokScroller' });
+    openModal(image) {
+      this.selectedImage = image;
     },
     getFilenameWithoutExtension(filename) {
-      const parts = filename.split('.');
-      return parts.slice(0, -1).join('.');
+      return filename.split('.').slice(0, -1).join('.');
     },
   },
 };
 </script>
 
 <style scoped>
-.kendok-page {
+.kendo-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -91,7 +89,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 10px;
   opacity: 0;

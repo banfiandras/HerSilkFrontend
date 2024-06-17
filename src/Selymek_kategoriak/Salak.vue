@@ -6,18 +6,18 @@
         v-for="image in images"
         :key="image.id"
         class="image-item"
-        @click="navigateToScroller(image)"
+        @click="redirectToGroup(image)"
       >
-      <img :src="baseUrl + image.location" :alt="image.filename" />
-        <div class="image-overlay" style="background-color: rgba(138, 43, 226, 0.7);">
-          <p>{{ getFilenameWithoutExtension(image.filename) }}</p>
+        <img :src="baseUrl + image.location" :alt="image.filename" />
+        <div class="image-overlay">
+          <p>{{ image.filename }}</p>
         </div>
       </div>
     </div>
     <div class="modal" v-if="selectedImage">
-      <span class="close" @click="selectedImage = null" style="color: white;">&times;</span>
+      <span class="close" @click="selectedImage = null">&times;</span>
       <img :src="baseUrl + selectedImage.location" :alt="selectedImage.filename" />
-      <p style="color: white;">{{ getFilenameWithoutExtension(selectedImage.filename) }}</p>
+      <p>{{ getFilenameWithoutExtension(selectedImage.filename) }}</p>
     </div>
   </div>
 </template>
@@ -30,28 +30,52 @@ export default {
     return {
       images: [],
       baseUrl: 'http://localhost:8000',
+      selectedImage: null,
     };
   },
   mounted() {
-    this.fetchSalImages();
+    this.fetchImages();
   },
   methods: {
-    async fetchSalImages() {
+    async fetchImages() {
       try {
         const response = await axios.get('http://localhost:8000/api/images/salak');
-        this.images = response.data;
+        const filteredImages = this.filterImages(response.data);
+        this.images = filteredImages;
       } catch (error) {
-        console.error('Error fetching Sal images:', error);
+        console.error('Error fetching images:', error);
       }
     },
-    navigateToScroller(image) {
-      localStorage.setItem('selectedImage', JSON.stringify(image));
-
-      this.$router.push({ name: 'SalakScroller' });
+    filterImages(images) {
+      const uniqueImages = {};
+      images.forEach(image => {
+        const baseName = this.getBaseName(image.filename);
+        if (!uniqueImages[baseName]) {
+          uniqueImages[baseName] = image;
+        }
+      });
+      return Object.values(uniqueImages);
+    },
+    getBaseName(filename) {
+      const match = filename.match(/^(.*)_\d+\.\w+$/);
+      return match ? match[1] : filename;
+    },
+    redirectToGroup(image) {
+      const baseName = this.getBaseName(image.filename);
+      this.$router.push({ name: 'SalakScroller', params: { imageName: baseName } });
+    },
+    openModal(image) {
+      this.selectedImage = image;
     },
     getFilenameWithoutExtension(filename) {
+      if (!filename) {
+        return '';
+      }
       const parts = filename.split('.');
-      return parts.slice(0, -1).join('.');
+      if (parts.length > 1) {
+        parts.pop();
+      }
+      return parts.join('.');
     },
   },
 };
@@ -91,7 +115,7 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   color: #fff;
   padding: 10px;
   opacity: 0;
@@ -102,9 +126,6 @@ export default {
   transform: scale(1.1);
 }
 
-.image-item:hover .image-overlay {
-  opacity: 1;
-}
 
 .modal {
   display: block;
