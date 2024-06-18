@@ -82,7 +82,7 @@ export default {
               preview: e.target.result
             });
           } else {
-            console.error('You can only upload up to 4 images.');
+            console.error('max 4');
           }
         };
         reader.readAsDataURL(file);
@@ -112,7 +112,7 @@ export default {
           console.error('Error uploading images: ', error);
         }
       } else {
-        console.error('No images selected or no image name provided.');
+        console.error('No images selected');
       }
     },
     fetchImages() {

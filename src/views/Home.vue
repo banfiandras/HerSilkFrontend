@@ -38,10 +38,10 @@ export default {
         if (Array.isArray(response.data) && response.data.length > 0) {
           this.images = response.data;
         } else {
-          console.warn('No carousel images found:', response.data);
+          console.warn('No images found:', response.data);
         }
       } catch (error) {
-        console.error('Error fetching carousel images:', error);
+        console.error('Error fetching images:', error);
       }
     },
     startCarousel() {
