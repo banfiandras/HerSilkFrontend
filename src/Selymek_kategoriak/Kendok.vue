@@ -1,16 +1,16 @@
 <template>
-  <div class="kendo-page">
-    <h1 style="color: #6a0dad;">Kendo Page</h1>
+  <div class="kendok-page">
+    <h1 style="color: #6a0dad;">Salak Page</h1>
     <div class="image-container">
       <div
         v-for="image in images"
         :key="image.id"
         class="image-item"
-        @click="openModal(image)"
+        @click="redirectToGroup(image)"
       >
         <img :src="baseUrl + image.location" :alt="image.filename" />
         <div class="image-overlay">
-          <p>{{ getFilenameWithoutExtension(image.filename) }}</p>
+          <p>{{ image.filename }}</p>
         </div>
       </div>
     </div>
@@ -39,37 +39,65 @@ export default {
   methods: {
     async fetchImages() {
       try {
-        const response = await axios.get('http://localhost:8000/api/images/kendo');
-        this.images = response.data;
+        const response = await axios.get('http://localhost:8000/api/images/kendok');
+        const filteredImages = this.filterImages(response.data);
+        this.images = filteredImages;
       } catch (error) {
         console.error('Error fetching images:', error);
       }
+    },
+    filterImages(images) {
+      const uniqueImages = {};
+      images.forEach(image => {
+        const baseName = this.getBaseName(image.filename);
+        if (!uniqueImages[baseName]) {
+          uniqueImages[baseName] = image;
+        }
+      });
+      return Object.values(uniqueImages);
+    },
+    getBaseName(filename) {
+      const match = filename.match(/^(.*)_\d+\.\w+$/);
+      return match ? match[1] : filename;
+    },
+    redirectToGroup(image) {
+      const baseName = this.getBaseName(image.filename);
+      this.$router.push({
+        name: 'KendokScrollerWithImageName',
+        params: { imageName: baseName }
+      });
     },
     openModal(image) {
       this.selectedImage = image;
     },
     getFilenameWithoutExtension(filename) {
-      return filename.split('.').slice(0, -1).join('.');
+      if (!filename) {
+        return '';
+      }
+      const parts = filename.split('.');
+      if (parts.length > 1) {
+        parts.pop();
+      }
+      return parts.join('.');
     },
   },
 };
 </script>
 
 <style scoped>
-.kendo-page {
+.kendok-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
 .image-container {
-  column-count: 4;
-  column-gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
 .image-item {
-  display: inline-block;
-  margin-bottom: 15px;
   position: relative;
   cursor: pointer;
   border-radius: 16px;
@@ -79,7 +107,8 @@ export default {
 
 .image-item img {
   width: 100%;
-  height: auto;
+  height: 200px; /* Ensures all images are the same height */
+  object-fit: cover; /* Ensures images cover the container without distortion */
   display: block;
   transition: transform 0.3s ease;
 }
@@ -100,9 +129,6 @@ export default {
   transform: scale(1.1);
 }
 
-.image-item:hover .image-overlay {
-  opacity: 1;
-}
 
 .modal {
   display: block;
@@ -135,19 +161,19 @@ export default {
 
 @media (max-width: 1200px) {
   .image-container {
-    column-count: 3;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 768px) {
   .image-container {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
   .image-container {
-    column-count: 1;
+    grid-template-columns: 1fr;
   }
 }
 </style>

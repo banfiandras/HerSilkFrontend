@@ -62,7 +62,10 @@ export default {
     },
     redirectToGroup(image) {
       const baseName = this.getBaseName(image.filename);
-      this.$router.push({ name: 'SalakScroller', params: { imageName: baseName } });
+      this.$router.push({
+        name: 'SalakScrollerWithImageName',
+        params: { imageName: baseName }
+      });
     },
     openModal(image) {
       this.selectedImage = image;
@@ -89,13 +92,12 @@ export default {
 }
 
 .image-container {
-  column-count: 4;
-  column-gap: 15px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 
 .image-item {
-  display: inline-block;
-  margin-bottom: 15px;
   position: relative;
   cursor: pointer;
   border-radius: 16px;
@@ -105,7 +107,8 @@ export default {
 
 .image-item img {
   width: 100%;
-  height: auto;
+  height: 200px; /* Ensures all images are the same height */
+  object-fit: cover; /* Ensures images cover the container without distortion */
   display: block;
   transition: transform 0.3s ease;
 }
@@ -158,19 +161,19 @@ export default {
 
 @media (max-width: 1200px) {
   .image-container {
-    column-count: 3;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 768px) {
   .image-container {
-    column-count: 2;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 480px) {
   .image-container {
-    column-count: 1;
+    grid-template-columns: 1fr;
   }
 }
 </style>

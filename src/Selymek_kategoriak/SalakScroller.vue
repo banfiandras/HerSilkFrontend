@@ -17,31 +17,35 @@
 import axios from 'axios';
 
 export default {
+  props: {
+    imageName: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       images: [],
       baseUrl: 'http://localhost:8000',
       selectedImage: null,
+      imageGroupName: '',
     };
   },
   computed: {
     formattedImageGroupName() {
-      const imageName = this.$route.params.imageName || '';
-      console.log("Image name from route params:", imageName); // Debug logging
-      return this.getFilenameWithoutSuffix(imageName);
+      return this.getFilenameWithoutSuffix(this.imageGroupName);
     }
   },
   mounted() {
+    this.imageGroupName = this.imageName;
     this.fetchGroupedImages();
   },
   methods: {
     async fetchGroupedImages() {
-      const imageName = this.$route.params.imageName;
-      console.log("Fetching images for group:", imageName); // Debug logging
       try {
-        const response = await axios.get(`http://localhost:8000/api/images/salak?name=${imageName}`);
-        console.log("Fetched images:", response.data); // Debug logging
-        this.images = response.data;
+        const response = await axios.get(`http://localhost:8000/api/images/salak`);
+        const filteredImages = response.data.filter(image => this.getBaseFilename(image.filename) === this.imageGroupName);
+        this.images = filteredImages;
       } catch (error) {
         console.error('Error fetching grouped images:', error);
       }
@@ -50,7 +54,14 @@ export default {
       this.selectedImage = image;
     },
     getFilenameWithoutSuffix(filename) {
+      if (!filename) {
+        return '';
+      }
       return filename.replace(/(_\d+)?(\.[^.]+)?$/, '');
+    },
+    getBaseFilename(filename) {
+      const match = filename.match(/^(.*)_\d+\.\w+$/);
+      return match ? match[1] : filename;
     }
   },
 };

@@ -16,10 +16,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <router-link class="nav-link custom-nav-link active" to="/">Kategóriák</router-link>
-          </li>
-          <li class="nav-item">
-            <router-link class="nav-link custom-nav-link" to="/Ujdonsagok">Újdonságok</router-link>
+            <router-link class="nav-link custom-nav-link active" to="/">Főoldal</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link custom-nav-link" to="/Selymek">Selymek</router-link>

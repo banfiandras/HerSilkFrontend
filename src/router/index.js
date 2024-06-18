@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+
 import Selymek from "../views/Selymek.vue";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
@@ -14,23 +15,34 @@ import SalScroller from "../Selymek_kategoriak/SalakScroller.vue";
 import KendoScroller from "../Selymek_kategoriak/KendokScroller.vue";
 
 const routes = [
-
-  {path: '/', name: 'Home', component: Home},
-  {path: '/selymek', name: 'Selymek', component: Selymek},
-  {path: '/admin', name: 'AdminPage', component: AdminPage},
-  {path: '/login', name: 'Login', component: Login},
-  {path: '/kapcsolat', name: 'Kapcsolat', component: Kapcsolat},
-  {path: '/rolam', name: 'Rolam', component: Rolam},
-  {path: '/ujdonsagok', name: 'Ujdonsagok', component: Ujdonsagok},
-  {path: '/vasarlas', name: 'Vasarlas', component: Vasarlas},
-  {path: '/kendok', name: 'Kendok', component: Kendok},
-  {path: '/salak', name: 'Salak', component: Salak},
-  {path: '/register', name: 'Register', component: Register},
-  {path: '/sal-scroller', name: 'SalakScroller', component: SalScroller},
-  {path: '/kendo-scroller', name: 'KendokScroller', component: KendoScroller},
+  { path: '/', name: 'Home', component: Home },
+  { path: '/selymek', name: 'Selymek', component: Selymek },
+  { path: '/admin', name: 'AdminPage', component: AdminPage },
+  { path: '/login', name: 'Login', component: Login },
+  { path: '/kapcsolat', name: 'Kapcsolat', component: Kapcsolat },
+  { path: '/rolam', name: 'Rolam', component: Rolam },
+  { path: '/ujdonsagok', name: 'Ujdonsagok', component: Ujdonsagok },
+  { path: '/vasarlas', name: 'Vasarlas', component: Vasarlas },
+  { path: '/kendok', name: 'Kendok', component: Kendok },
+  { path: '/salak', name: 'Salak', component: Salak },
+  { path: '/register', name: 'Register', component: Register },
+  { path: '/sal-scroller', name: 'SalakScroller', component: SalScroller },
+  { 
+    path: '/kendo-scroller/:imageName',
+    name: 'KendokScrollerWithImageName',
+    component: KendoScroller,
+    props: true,
+    },
+  {
+    path: '/salak-scroller/:imageName',
+    name: 'SalakScrollerWithImageName',
+    component: SalScroller,
+    props: true,
+  },
 ];
 
 const baseURL = import.meta.env.VUE_APP_BASE_URL || '/';
+
 const router = createRouter({
   history: createWebHistory(baseURL),
   routes,
